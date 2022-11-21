@@ -1,31 +1,52 @@
 
  import React from 'react';
  import {
-   SafeAreaView,
    ScrollView,
-   StatusBar,
    StyleSheet,
-   Text,
    useColorScheme,
    View,
    Button,
+   SafeAreaView,
+   Text, 
+   Alert, 
+   TouchableOpacity,
+   Image
  } from 'react-native';
+ import Logo from "./assets/logo.svg";
+ import { StatusBar } from "expo-status-bar";
+
+
+
+
+//  const AppButton = ({ onPress, title }) => (
+//   <TouchableOpacity onPress={onPress} style={styles.appButtonContainer}>
+//     <Text style={styles.appButtonText}>{title}</Text>
+//   </TouchableOpacity>
+// );
 
 function FirstScreen({ navigation })
 {
   return(
-    <View style={styles.container}>
-    {/* <Text>{returnTheSame("siu")}</Text> */}
-    {/* <Text>{concatenateArray(["dffd","gfddffddf","hfdfd"])}</Text> */}
+    <SafeAreaView style={styles.container}>
+     <Logo />
+     <StatusBar style="auto" />
+    <View style={styles.appButtonContainer}>
 
     <Button
-    title="Create song"
+    title="CREATE SONG"
     onPress={() =>
-      navigation.navigate('SecondScreen')}
-    color="#841584"
+      navigation.navigate('SecondScreen',{
+        itemId: 86,
+        otherParam: 'anything you want here'})}
+    color="#fcf7fb"
+    
+
     />
 
-  </View>);
+  </View>
+  </SafeAreaView>
+
+  );
 
 }
 
@@ -35,10 +56,35 @@ const styles = StyleSheet.create({
           flex: 1,
            justifyContent: 'center',  //na srodku
            alignItems: 'center',   //tez
-           backgroundColor: 'powderblue',
+           backgroundColor: '#f0f5f4',
            flexDirection: 'column',
-    }});
+           alignItems: "center",
+           justifyContent: "center",
+            },
+            title: {
+              textAlign: 'center',
+              marginVertical: 8,
+            },
+            appButtonContainer: {
+              elevation: 8,
+              backgroundColor: "#a82f7a",
+              borderRadius: 10,
+              paddingVertical: 10,
+              paddingHorizontal: 12
+            },
+            appButtonText: {
+              fontSize: 18,
+              color: "#fcf7fb",
+              fontWeight: "bold",
+              alignSelf: "center",
+              textTransform: "uppercase"
+            }
+            
+          });  
+
       
       
   export default FirstScreen;
   
+{/* <Text>{returnTheSame("siu")}</Text> */}
+    {/* <Text>{concatenateArray(["dffd","gfddffddf","hfdfd"])}</Text> */}
