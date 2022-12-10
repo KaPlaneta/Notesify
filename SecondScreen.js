@@ -19,66 +19,62 @@ function SecondScreen({ route, navigation }) {
   const make = musicTheory[durMol];
   const selectionString = make.name + " " + make.models[tonacja];
   return (
-    <SafeAreaView style={styles.main}>
+    <SafeAreaView style={styles.container}>
       <ScrollView>
-        <View style={styles.container}>
-          <Text>Please choose metrum:</Text>
-          <Picker
-            selectedValue={selectedValue}
-            style={{ width: 150 }}
-            onValueChange={(itemValue, itemIndex) =>
-              setSelectedValue(itemValue)
-            }
-          >
-            <Picker.Item label="1/4" value="1/4" />
-            <Picker.Item label="2/4" value="2/4" />
-            <Picker.Item label="3/4" value="3/4" />
-            <Picker.Item label="4/4" value="4/4" />
-          </Picker>
+        {/* <View> */}
+        <Text>Please choose metrum:</Text>
+        <Picker
+          selectedValue={selectedValue}
+          style={{ width: 150 }}
+          onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
+        >
+          <Picker.Item label="1/4" value="1/4" />
+          <Picker.Item label="2/4" value="2/4" />
+          <Picker.Item label="3/4" value="3/4" />
+          <Picker.Item label="4/4" value="4/4" />
+        </Picker>
 
-          <View>
-            <Text>Please choose major minor mode:</Text>
-            <Picker
-              selectedValue={durMol}
-              onValueChange={(value) => {
-                setdurMol(value);
-                settonacja(0);
-              }}
-            >
-              {Object.keys(musicTheory).map((value) => (
-                <Picker.Item
-                  key={value}
-                  value={value}
-                  label={musicTheory[value].name}
-                />
-              ))}
-            </Picker>
-            <Text>Please choose a key of {make.name}:</Text>
-            <Picker
-              selectedValue={tonacja}
-              key={durMol}
-              onValueChange={(value) => settonacja(value)}
-            >
-              {musicTheory[durMol].models.map((modelName, value) => (
-                <Picker.Item
-                  key={`${durMol}_${value}`}
-                  value={value}
-                  label={modelName}
-                />
-              ))}
-            </Picker>
-            <Text>You selected: {selectionString}</Text>
-          </View>
-          <Button
-            onPress={() =>
-              navigation.navigate("ThirdScreen", {
-                tonacja: make.models[tonacja],
-              })
-            }
-            title="START"
-            color="#a82f7a"
-          />
-        </View>
+        <Text>Please choose major minor mode:</Text>
+        <Picker
+          selectedValue={durMol}
+          onValueChange={(value) => {
+            setdurMol(value);
+            settonacja(0);
+          }}
+        >
+          {Object.keys(musicTheory).map((value) => (
+            <Picker.Item
+              key={value}
+              value={value}
+              label={musicTheory[value].name}
+            />
+          ))}
+        </Picker>
+        <Text>Please choose a key of {make.name}:</Text>
+        <Picker
+          selectedValue={tonacja}
+          key={durMol}
+          onValueChange={(value) => settonacja(value)}
+        >
+          {musicTheory[durMol].models.map((modelName, value) => (
+            <Picker.Item
+              key={`${durMol}_${value}`}
+              value={value}
+              label={modelName}
+            />
+          ))}
+        </Picker>
+        <Text>You selected: {selectionString}</Text>
+        <Button
+          onPress={() =>
+            navigation.navigate("ThirdScreen", {
+              tonacja: make.models[tonacja],
+            })
+          }
+          title="START"
+          color="#a82f7a"
+        />
+        {/* </View> */}
       </ScrollView>
     </SafeAreaView>
   );
