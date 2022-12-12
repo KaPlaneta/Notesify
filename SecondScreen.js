@@ -13,20 +13,20 @@ import { Picker } from "@react-native-picker/picker";
 import { PickerIOS } from "@react-native-picker/picker";
 
 function SecondScreen({ route, navigation }) {
-  const [selectedValue, setSelectedValue] = useState("Metrum");
-  const [durMol, setdurMol] = React.useState("dur");
-  const [tonacja, settonacja] = React.useState(7);
+  const [selectedValue, setSelectedValue] = useState("1/4");
+  const [durMol, setDurMol] = React.useState("dur");
+  const [musicalKey, setMusicalKey] = React.useState(7);
   const make = musicTheory[durMol];
-  const selectionString = make.name + " " + make.models[tonacja];
+  const selectionString = make.name + " " + make.models[musicalKey];
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
         {/* <View> */}
-        <Text>Please choose metrum:</Text>
+        <Text>Please choose time signature:</Text>
         <Picker
           selectedValue={selectedValue}
           style={{ width: 150 }}
-          onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
+          onValueChange={(value) => setSelectedValue(value)}
         >
           <Picker.Item label="1/4" value="1/4" />
           <Picker.Item label="2/4" value="2/4" />
@@ -38,8 +38,8 @@ function SecondScreen({ route, navigation }) {
         <Picker
           selectedValue={durMol}
           onValueChange={(value) => {
-            setdurMol(value);
-            settonacja(0);
+            setDurMol(value);
+            setMusicalKey(0);
           }}
         >
           {Object.keys(musicTheory).map((value) => (
@@ -52,9 +52,9 @@ function SecondScreen({ route, navigation }) {
         </Picker>
         <Text>Please choose a key of {make.name}:</Text>
         <Picker
-          selectedValue={tonacja}
+          selectedValue={musicalKey}
           key={durMol}
-          onValueChange={(value) => settonacja(value)}
+          onValueChange={(value) => setMusicalKey(value)}
         >
           {musicTheory[durMol].models.map((modelName, value) => (
             <Picker.Item
@@ -68,7 +68,9 @@ function SecondScreen({ route, navigation }) {
         <Button
           onPress={() =>
             navigation.navigate("ThirdScreen", {
-              tonacja: make.models[tonacja],
+              // image: goSaveImage(),
+              musicalKey: make.models[musicalKey],
+              chosenTimeSignature: selectedValue,
             })
           }
           title="START"
@@ -79,6 +81,8 @@ function SecondScreen({ route, navigation }) {
     </SafeAreaView>
   );
 }
+
+// const timeSignature = { metra: ["1/4", "2/4", "3/4", "4/4"] };
 const musicTheory = {
   dur: {
     name: "DUR",
