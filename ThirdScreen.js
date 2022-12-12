@@ -19,9 +19,7 @@ import Czteryczwarte from "./assets/4-4.svg";
 
 import Midi from "react-native-midi";
 import { useEffect } from "react";
-// import Test from "./Test";
 import Line from "./assets/line.svg";
-// import resolveAssetSource from "resolveAssetSource";
 
 // const originalWidth = 210;
 // const originalHeight = 297;
@@ -34,11 +32,8 @@ const windowHeight = Dimensions.get("window").height;
 
 function ThirdScreen({ route, navigation, props }) {
   const { image, musicalKey, chosenTimeSignature } = route.params;
-  //   const [pitch, setPitch] = React.useState([]); raczej nie potrzebne
-  //   const [start, setStart] = React.useState([]);
+
   const [stop, setStop] = React.useState([]); //potrzebny jeden setter do rerenderowania componentu czyli update stanu
-  //   console.log("start: ", start);
-  //   console.log("stop: ", stop);
 
   console.log("musicalKey", musicalKey);
   console.log("timeSignature", chosenTimeSignature);
@@ -72,7 +67,6 @@ function ThirdScreen({ route, navigation, props }) {
 
       arrayStopRef.current.push(time);
       setStop([50]);
-      //   console.log("stop ", arrayStopRef.current); //zobacyzc czy stop dziala
     });
     return () => {
       Midi.off(Midi.NOTE_ON);
@@ -112,9 +106,6 @@ function ThirdScreen({ route, navigation, props }) {
 
   return (
     <SafeAreaView>
-      {/* <Test></Test> */}
-      {/* <Staff></Staff> */}
-      {/* <ImageBackground source={require("./assets/staff3.svg")} style={{ width: "50%", height: "60%" }}> */}
       <Staff
         // transform={[
         //   { scale: 0.5 },
@@ -143,27 +134,12 @@ function ThirdScreen({ route, navigation, props }) {
         width={windowWidth * 2}
       /> */}
 
-      {/* <Image
-        source={require("./assets/eightNote.png")}
-        style={{
-          width: "4%",
-          height: "5%",
-          resizeMode: "contain",
-          position: "absolute",
-          transform: [{ translateX: 60 }, { translateY: 500 }],
-        }}
-      /> */}
       {/* wywolanie funkcji displayNotes */}
       {displayNotes(
         arrayNotesRef.current,
         arrayStartRef.current,
         arrayStopRef.current
       )}
-
-      {/* <Text>musicalKey: {JSON.stringify(musicalKey)}</Text>
-      <Text>timeSignature: {JSON.stringify(selectedValue)}</Text> */}
-
-      {/* </ImageBackground> */}
     </SafeAreaView>
   );
 }
@@ -198,7 +174,6 @@ const positionsY = {
 };
 
 function Metrum(props) {
-  //   let Picture;
   switch (props.selectedValue) {
     case "1/4":
       Picture = Jednaczwarta;
@@ -241,7 +216,6 @@ function Metrum(props) {
         props.selectedValue
       );
   }
-  //   return <Picture style={props.style} />;
 }
 
 const positionXFirstNote = 70;
@@ -251,8 +225,6 @@ function displayNotes(pitchArray, startArray, stopArray) {
   console.log("start: ", startArray);
   console.log("stop: ", stopArray);
 
-  // tablica z numerami z potencjanlego midi
-  //   const myArray = arrayNotesRef.current;
   const notesArray = [];
 
   for (let i = 0; i < pitchArray.length; i++) {
