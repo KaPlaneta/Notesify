@@ -12,6 +12,11 @@ import {
   Dimensions,
 } from "react-native";
 import Staff from "./assets/stafff.svg";
+import Jednaczwarta from "./assets/1-4.svg";
+import Dwieczwarte from "./assets/2-4.svg";
+import Trzyczwarte from "./assets/3-4.svg";
+import Czteryczwarte from "./assets/4-4.svg";
+
 import Midi from "react-native-midi";
 import { useEffect } from "react";
 // import Test from "./Test";
@@ -28,12 +33,15 @@ const windowHeight = Dimensions.get("window").height;
 // console.log(sec);
 
 function ThirdScreen({ route, navigation, props }) {
-  const { tonacja, metrum } = route.params;
+  const { image, musicalKey, chosenTimeSignature } = route.params;
   //   const [pitch, setPitch] = React.useState([]); raczej nie potrzebne
   //   const [start, setStart] = React.useState([]);
   const [stop, setStop] = React.useState([]); //potrzebny jeden setter do rerenderowania componentu czyli update stanu
   //   console.log("start: ", start);
   //   console.log("stop: ", stop);
+
+  console.log("musicalKey", musicalKey);
+  console.log("timeSignature", chosenTimeSignature);
 
   const arrayNotesRef = React.useRef([]);
   const arrayStartRef = React.useRef([]);
@@ -116,6 +124,14 @@ function ThirdScreen({ route, navigation, props }) {
         height={800}
         width={windowWidth}
       />
+      <Metrum
+        selectedValue={chosenTimeSignature}
+        style={{
+          resizeMode: "contain",
+          position: "absolute",
+          transform: [{ translateX: 50 }, { translateY: 75 }],
+        }}
+      />
       {/* <Line
         position="absolute"
         transform={[
@@ -127,7 +143,7 @@ function ThirdScreen({ route, navigation, props }) {
         width={windowWidth * 2}
       /> */}
 
-      <Image
+      {/* <Image
         source={require("./assets/eightNote.png")}
         style={{
           width: "4%",
@@ -136,19 +152,22 @@ function ThirdScreen({ route, navigation, props }) {
           position: "absolute",
           transform: [{ translateX: 60 }, { translateY: 500 }],
         }}
-      />
+      /> */}
       {/* wywolanie funkcji displayNotes */}
       {displayNotes(
         arrayNotesRef.current,
         arrayStartRef.current,
         arrayStopRef.current
       )}
-      {/* <Text>tonacja: {JSON.stringify(tonacja)}</Text>
-      <Text>metrum: {JSON.stringify(metrum)}</Text> */}
+
+      {/* <Text>musicalKey: {JSON.stringify(musicalKey)}</Text>
+      <Text>timeSignature: {JSON.stringify(selectedValue)}</Text> */}
+
       {/* </ImageBackground> */}
     </SafeAreaView>
   );
 }
+
 const midiNumber = {
   24: "C",
   25: "Db",
@@ -164,11 +183,11 @@ const midiNumber = {
   35: "H",
 };
 const positionsY = {
-  C: 10,
+  C: 0,
   //   Db: ,
-  D: 12,
+  D: -6,
   //   Eb: ,
-  E: 14,
+  E: -12,
   //   F: ,
   //   Gb: ,
   //   G: ,
@@ -178,7 +197,55 @@ const positionsY = {
   //   B: ,
 };
 
-const positionXFirstNote = 30;
+function Metrum(props) {
+  //   let Picture;
+  switch (props.selectedValue) {
+    case "1/4":
+      Picture = Jednaczwarta;
+      return (
+        <Jednaczwarta style={{ ...props.style, width: "7%", height: "5%" }} />
+      );
+
+    case "2/4":
+      Picture = Dwieczwarte;
+      return (
+        <Dwieczwarte
+          style={{
+            ...props.style,
+            width: "8%",
+            height: "9%",
+            transform: [{ translateX: 50 }, { translateY: 60 }],
+          }}
+        />
+      );
+    case "3/4":
+      Picture = Trzyczwarte;
+      return (
+        <Trzyczwarte style={{ ...props.style, width: "7%", height: "5%" }} />
+      );
+    case "4/4":
+      Picture = Czteryczwarte;
+      return (
+        <Czteryczwarte
+          style={{
+            ...props.style,
+            width: "7%",
+            height: "5%",
+            transform: [{ translateX: 50 }, { translateY: 65 }],
+          }}
+        />
+      );
+    default:
+      throw new Error(
+        "You chose the wrong time signature: ",
+        props.selectedValue
+      );
+  }
+  //   return <Picture style={props.style} />;
+}
+
+const positionXFirstNote = 70;
+const positionYFirstNote = 85;
 function displayNotes(pitchArray, startArray, stopArray) {
   console.log("pitch: ", pitchArray);
   console.log("start: ", startArray);
@@ -197,11 +264,9 @@ function displayNotes(pitchArray, startArray, stopArray) {
     console.log("midinumber ", midiNumber[firstNote]);
     console.log("position ", positionsY[midiNumber[firstNote]]);
     console.log("duration", durationInMs);
-    // const translateY = -2 * firstNote.pitch + 12; //polozenie dzwieku gora dol
-    // const translateX = 10 * firstNote.duration + 30; // polozenie dzwieku kolejnego x
 
-    const translateX = 10 * i + positionXFirstNote;
-    const translateY = positionsY[midiNumber[firstNote]];
+    const translateX = 20 * i + positionXFirstNote;
+    const translateY = positionsY[midiNumber[firstNote]] + positionYFirstNote;
 
     console.log(translateY, translateX);
 
@@ -211,8 +276,8 @@ function displayNotes(pitchArray, startArray, stopArray) {
         source={require("./assets/eightNote.png")}
         key={i}
         style={{
-          width: "4%",
-          height: "5%",
+          width: "6%",
+          height: "7%",
           resizeMode: "contain",
           position: "absolute",
           transform: [{ translateX }, { translateY }],
