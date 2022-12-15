@@ -5,6 +5,7 @@ import SecondScreen from "./SecondScreen";
 import FirstScreen from "./FirstScreen";
 import ThirdScreen from "./ThirdScreen";
 import { displayNotes } from "./ThirdScreen";
+import { LogBox } from "react-native";
 
 import {
   SafeAreaView,
@@ -16,6 +17,11 @@ import {
   View,
   Button,
 } from "react-native";
+
+LogBox.ignoreLogs([
+  "`new NativeEventEmitter()` was called with a non-null argument without the required `addListener` method.",
+  "`new NativeEventEmitter()` was called with a non-null argument without the required `removeListeners` method.",
+]); // Ignore log notification by message
 
 const Stack = createNativeStackNavigator();
 
