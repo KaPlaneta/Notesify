@@ -17,6 +17,9 @@ import Dwieczwarte from "./assets/2-4.svg";
 import Trzyczwarte from "./assets/3-4.svg";
 import Czteryczwarte from "./assets/4-4.svg";
 
+import Cross from "./assets/cross.svg";
+import Flat from "./assets/flat.svg";
+
 import Midi from "react-native-midi";
 import { useEffect } from "react";
 import Line from "./assets/line.svg";
@@ -115,7 +118,16 @@ function ThirdScreen({ route, navigation, props }) {
         height={800}
         width={windowWidth}
       />
+      <MusicalKey
+        valueOfKey={musicalKey}
+        style={{
+          resizeMode: "contain",
+          position: "absolute",
+          transform: [{ translateX: 100 }, { translateY: 70 }],
+        }}
+      />
       <Metrum
+        musicalKey={musicalKey}
         selectedValue={chosenTimeSignature}
         style={{
           resizeMode: "contain",
@@ -123,6 +135,7 @@ function ThirdScreen({ route, navigation, props }) {
           transform: [{ translateX: 50 }, { translateY: 75 }],
         }}
       />
+
       {/* <Line
         position="absolute"
         transform={[
@@ -174,47 +187,123 @@ const positionsY = {
 };
 
 function Metrum(props) {
+  let changePosition = 0;
+  if (props.musicalKey === "C-dur" || props.musicalKey === "a-mol") {
+    changePosition = 0;
+  } else if (props.musicalKey === "F-dur" || props.musicalKey === "d-mol") {
+    changePosition = 10;
+  } else if (props.musicalKey === "D-dur" || props.musicalKey === "h-mol") {
+    changePosition = 20;
+  }
   switch (props.selectedValue) {
     case "1/4":
-      Picture = Jednaczwarta;
       return (
-        <Jednaczwarta style={{ ...props.style, width: "7%", height: "5%" }} />
+        <Jednaczwarta
+          style={{
+            ...props.style,
+            width: "7%",
+            height: "5%",
+            transform: [
+              { translateX: 55 + changePosition },
+              { translateY: 75 },
+            ],
+          }}
+        />
       );
 
     case "2/4":
-      Picture = Dwieczwarte;
       return (
         <Dwieczwarte
           style={{
             ...props.style,
             width: "8%",
             height: "9%",
-            transform: [{ translateX: 50 }, { translateY: 60 }],
+            transform: [
+              { translateX: 55 + changePosition },
+              { translateY: 60 },
+            ],
           }}
         />
       );
     case "3/4":
-      Picture = Trzyczwarte;
       return (
-        <Trzyczwarte style={{ ...props.style, width: "7%", height: "5%" }} />
+        <Trzyczwarte
+          style={{
+            ...props.style,
+            width: "7%",
+            height: "5%",
+            transform: [
+              { translateX: 55 + changePosition },
+              { translateY: 75 },
+            ],
+          }}
+        />
       );
     case "4/4":
-      Picture = Czteryczwarte;
       return (
         <Czteryczwarte
           style={{
             ...props.style,
             width: "7%",
             height: "5%",
-            transform: [{ translateX: 50 }, { translateY: 65 }],
+            transform: [
+              { translateX: 57 + changePosition },
+              { translateY: 65 },
+            ],
           }}
         />
       );
     default:
       throw new Error(
-        "You chose the wrong time signature: ",
+        "You choose the wrong time signature: ",
         props.selectedValue
       );
+  }
+}
+
+function MusicalKey(props) {
+  switch (props.valueOfKey) {
+    case "F-dur":
+    case "d-mol":
+      return (
+        <Flat
+          style={{
+            ...props.style,
+            position: "absolute",
+            width: "4%",
+            height: "3.5%",
+            transform: [{ translateX: 50 }, { translateY: 75 }],
+          }}
+        />
+      );
+    case "D-dur":
+    case "h-mol":
+      return (
+        <>
+          <Cross
+            style={{
+              ...props.style,
+              width: "4%",
+              height: "3.5%",
+              transform: [{ translateX: 50 }, { translateY: 60 }],
+            }}
+          />
+          <Cross
+            style={{
+              ...props.style,
+              position: "absolute",
+              width: "4%",
+              height: "3.5%",
+              transform: [{ translateX: 60 }, { translateY: 75 }],
+            }}
+          />
+        </>
+      );
+    case "C-dur":
+    case "a-mol":
+      return;
+    default:
+      throw new Error("You choose the wrong musical key: ", props.valueOfKey);
   }
 }
 

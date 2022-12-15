@@ -15,7 +15,7 @@ import { PickerIOS } from "@react-native-picker/picker";
 function SecondScreen({ route, navigation }) {
   const [selectedValue, setSelectedValue] = useState("1/4");
   const [durMol, setDurMol] = React.useState("dur");
-  const [musicalKey, setMusicalKey] = React.useState(7);
+  const [musicalKey, setMusicalKey] = React.useState(1);
   const make = musicTheory[durMol];
   const selectionString = make.name + " " + make.models[musicalKey];
   return (
@@ -82,47 +82,14 @@ function SecondScreen({ route, navigation }) {
   );
 }
 
-// const timeSignature = { metra: ["1/4", "2/4", "3/4", "4/4"] };
 const musicTheory = {
   dur: {
     name: "DUR",
-    models: [
-      "Ces-dur",
-      "Ges-dur",
-      "Des-dur",
-      "As-dur",
-      "Es-dur",
-      "B-dur",
-      "F-dur",
-      "C-dur",
-      "G-dur",
-      "D-dur",
-      "A-dur",
-      "E-dur",
-      "H-dur",
-      "Fis-dur",
-      "Cis-dur",
-    ],
+    models: ["F-dur", "C-dur", "D-dur"],
   },
   mol: {
     name: "MOL",
-    models: [
-      "as-mol",
-      "es-mol",
-      "b-mol",
-      "f-mol",
-      "c-mol",
-      "g-mol",
-      "d-mol",
-      "a-mol",
-      "e-mol",
-      "h-mol",
-      "fis-mol",
-      "cis-mol",
-      "gis-mol",
-      "dis-mol",
-      "ais-mol",
-    ],
+    models: ["d-mol", "a-mol", "h-mol"],
   },
 };
 
