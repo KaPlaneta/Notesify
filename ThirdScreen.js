@@ -35,9 +35,6 @@ const positionYFirstNote = 63.5; //wzgledem tego układaja sie wysokosci nut
 const miliSecondInMInute = 60000;
 const valueXBetweenNotes = 35; //
 
-// const originalWidth = 210;
-// const originalHeight = 297;
-// const aspectRatio = originalWidth / originalHeight;
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
@@ -69,11 +66,6 @@ function ThirdScreen({ route, navigation, props }) {
 
       //   console.log("note ", arrayNotesRef.current); //zobacyzc czy naciskanie dziala
       //   console.log("start ", arrayStartRef.current);
-
-      //   arrayStart.push(time);
-      //   setStart(arrayStart);
-
-      //   console.log(`Device "${event.device}" started note: ${event.note}`);
     });
 
     Midi.on(Midi.NOTE_OFF, (event) => {
@@ -87,36 +79,6 @@ function ThirdScreen({ route, navigation, props }) {
       Midi.off(Midi.NOTE_OFF);
     };
   }, []);
-
-  //   const [width, setWidth] = useState(0);
-  //   const [height, setHeight] = useState(0);
-
-  //   const onLayout = useCallback(
-  //     (event) => {
-  //       const containerWidth = event.nativeEvent.layout.width;
-
-  //       if (props.ratio) {
-  //         setWidth(containerWidth);
-  //         setHeight(containerWidth * props.ratio);
-  //       } else if (typeof props.source === "number") {
-  //         const source = resolveAssetSource(props.source);
-
-  //         setWidth(containerWidth);
-  //         setHeight((containerWidth * source.height) / source.width);
-  //       } else if (typeof props.source === "object") {
-  //         Image.getSize(props.source.uri, (w, h) => {
-  //           setWidth(containerWidth);
-  //           setHeight((containerWidth * h) / w);
-  //         });
-  //       }
-  //     },
-  //     [props.ratio, props.source]
-  //   );
-  //   const originalWidth = 210;
-  //   const originalHeight = 297;
-  //   //   const aspectRatio = originalWidth / originalHeight;
-  //   const windowWidth = Dimensions.get("window").width;
-  //   const windowHeight = Dimensions.get("window").height;
 
   return (
     <SafeAreaView>
@@ -147,7 +109,7 @@ function ThirdScreen({ route, navigation, props }) {
         }}
       />
 
-      {/* <Line
+      <Line
         position="absolute"
         transform={[
           { translateX: windowWidth * -0.0053 },
@@ -156,7 +118,7 @@ function ThirdScreen({ route, navigation, props }) {
         ]}
         height={windowHeight * 2}
         width={windowWidth * 2}
-      /> */}
+      />
 
       {/* wywolanie funkcji displayNotes */}
       {displayNotes(
