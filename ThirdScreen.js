@@ -33,7 +33,7 @@ const calanuta = require("./assets/note.png");
 const positionXFirstNote = 80; //od poczatku ekranu
 const positionYFirstNote = 63.5; //wzgledem tego układaja sie wysokosci nut
 const miliSecondInMInute = 60000;
-const valueXBetweenNotes = 20; //
+const valueXBetweenNotes = 35; //
 
 // const originalWidth = 210;
 // const originalHeight = 297;
@@ -403,14 +403,10 @@ function CzarneKlawisze(props) {
               height: "3.5%",
               transform: [
                 {
-                  translateX:
-                    valueXBetweenNotes * props.i +
-                    positionXFirstNote +
-                    props.changePosition,
+                  translateX: props.translateX - 3,
                 },
                 {
-                  translateY:
-                    positionsY[midiNumber[props.note]] + positionYFirstNote,
+                  translateY: props.translateY + 48,
                 },
               ],
             }}
@@ -427,14 +423,10 @@ function CzarneKlawisze(props) {
               height: "3.5%",
               transform: [
                 {
-                  translateX:
-                    valueXBetweenNotes * props.i +
-                    positionXFirstNote +
-                    props.changePosition,
+                  translateX: props.translateX - 3,
                 },
                 {
-                  translateY:
-                    positionsY[midiNumber[props.note]] + positionYFirstNote,
+                  translateY: props.translateY + 40,
                 },
               ],
             }}
@@ -464,14 +456,30 @@ function CzarneKlawisze(props) {
               height: "3.5%",
               transform: [
                 {
-                  translateX:
-                    valueXBetweenNotes * props.i +
-                    positionXFirstNote +
-                    props.changePosition,
+                  translateX: props.translateX - 3,
                 },
                 {
-                  translateY:
-                    positionsY[midiNumber[props.note]] + positionYFirstNote,
+                  translateY: props.translateY + 48,
+                },
+              ],
+            }}
+          />
+        );
+      } else if (props.note === 34 || props.note === 46 || props.note === 58) {
+        return (
+          <Flat
+            key={props.key}
+            style={{
+              ...props.style,
+              position: "absolute",
+              width: "4%",
+              height: "3.5%",
+              transform: [
+                {
+                  translateX: props.translateX - 3,
+                },
+                {
+                  translateY: props.translateY + 40,
                 },
               ],
             }}
@@ -505,14 +513,10 @@ function CzarneKlawisze(props) {
               height: "3.5%",
               transform: [
                 {
-                  translateX:
-                    valueXBetweenNotes * props.i +
-                    positionXFirstNote +
-                    props.changePosition,
+                  translateX: props.translateX - 3,
                 },
                 {
-                  translateY:
-                    positionsY[midiNumber[props.note]] + positionYFirstNote,
+                  translateY: props.translateY + 48,
                 },
               ],
             }}
@@ -582,6 +586,8 @@ function displayNotes(musicalKey, pitchArray, startArray, stopArray, bpm) {
       <CzarneKlawisze
         key={(i + 1) * 1000}
         i={i}
+        translateX={translateX}
+        translateY={translateY}
         valueOfKey={musicalKey}
         note={note}
         changePosition={changePosition}
