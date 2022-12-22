@@ -24,6 +24,17 @@ import Midi from "react-native-midi";
 import { useEffect } from "react";
 import Line from "./assets/line.svg";
 
+const cwiercnuta = require("./assets/quarterNote.png");
+const osemka = require("./assets/eightNote.png");
+const szesnastka = require("./assets/sixteenNote.png");
+const polnuta = require("./assets/halfNote.png");
+const calanuta = require("./assets/note.png");
+
+const positionXFirstNote = 80; //od poczatku ekranu
+const positionYFirstNote = 63.5; //wzgledem tego układaja sie wysokosci nut
+const miliSecondInMInute = 60000;
+const valueXBetweenNotes = 20; //
+
 // const originalWidth = 210;
 // const originalHeight = 297;
 // const aspectRatio = originalWidth / originalHeight;
@@ -34,14 +45,14 @@ const windowHeight = Dimensions.get("window").height;
 // console.log(sec);
 
 function ThirdScreen({ route, navigation, props }) {
-  const { image, musicalKey, chosenTimeSignature } = route.params;
+  const { image, bpm, musicalKey, chosenTimeSignature } = route.params;
 
-  const [stop, setStop] = React.useState([]); //potrzebny jeden setter do rerenderowania componentu czyli update stanu
+  const [fakeStop, setFakeStop] = React.useState([]); //potrzebny jeden setter do rerenderowania componentu czyli update stanu
 
   console.log("musicalKey", musicalKey);
   console.log("timeSignature", chosenTimeSignature);
 
-  const arrayNotesRef = React.useRef([]);
+  const arrayNotesRef = React.useRef([]); //stan nie rerenderuje sie komponent jak sie go zmienia
   const arrayStartRef = React.useRef([]);
   const arrayStopRef = React.useRef([]);
 
@@ -69,7 +80,7 @@ function ThirdScreen({ route, navigation, props }) {
       const time = new Date().getTime();
 
       arrayStopRef.current.push(time);
-      setStop([50]);
+      setFakeStop([50]);
     });
     return () => {
       Midi.off(Midi.NOTE_ON);
@@ -149,52 +160,109 @@ function ThirdScreen({ route, navigation, props }) {
 
       {/* wywolanie funkcji displayNotes */}
       {displayNotes(
+        musicalKey,
         arrayNotesRef.current,
         arrayStartRef.current,
-        arrayStopRef.current
+        arrayStopRef.current,
+        bpm
       )}
     </SafeAreaView>
   );
 }
 
 const midiNumber = {
-  24: "C",
-  25: "Db",
-  26: "D",
-  27: "Eb",
-  28: "E",
-  29: "F",
-  30: "Gb",
-  31: "G",
-  32: "Ab",
-  33: "A",
-  34: "B",
-  35: "H",
+  24: "C1",
+  25: "Cis1",
+  26: "D1",
+  27: "Dis1",
+  28: "E1",
+  29: "F1",
+  30: "Fis1",
+  31: "G1",
+  32: "Gis1",
+  33: "A1",
+  34: "B1",
+  35: "H1",
+  36: "C2",
+  37: "Cis2",
+  38: "D2",
+  39: "Dis2",
+  40: "E2",
+  41: "F2",
+  42: "Fis2",
+  43: "G2",
+  44: "Gis2",
+  45: "A2",
+  46: "B2",
+  47: "H2",
+  48: "C3",
+  49: "Cis3",
+  50: "D3",
+  51: "Dis3",
+  52: "E3",
+  53: "F3",
+  54: "Fis3",
+  55: "G3",
+  56: "Gis3",
+  57: "A3",
+  58: "B3",
+  59: "H3",
 };
 const positionsY = {
-  C: 0,
-  //   Db: ,
-  D: -6,
-  //   Eb: ,
-  E: -12,
-  //   F: ,
-  //   Gb: ,
-  //   G: ,
-  //   Ab: ,
-  //   A: ,
-  //   Bb: ,
-  //   B: ,
+  C1: 0,
+  Cis1: 0,
+  D1: -5,
+  Dis1: -5,
+  E1: -10,
+  F1: -15,
+  Fis1: -15,
+  G1: -20,
+  Gis1: -20,
+  A1: -25,
+  B1: -30,
+  H1: -30,
+  C2: -35,
+  Cis2: -35,
+  D2: -40,
+  Dis2: -40,
+  E2: -45,
+  F2: -50,
+  Fis2: -50,
+  G2: -55,
+  Gis2: -55,
+  A2: -60,
+  B2: -65,
+  H2: -65,
+  C3: -75,
+  Cis3: -75,
+  D3: -80,
+  Dis3: -80,
+  E3: -85,
+  F3: -90,
+  Fis3: -90,
+  G3: -95,
+  Gis3: -95,
+  A3: -100,
+  B3: -105,
+  H3: -105,
 };
 
-function Metrum(props) {
+//funkcja do zmieniana polozenia tonacji i metrum i dzwiekow
+function calculateShift(musicalKey) {
   let changePosition = 0;
-  if (props.musicalKey === "C-dur" || props.musicalKey === "a-mol") {
+  if (musicalKey === "C-dur" || musicalKey === "a-mol") {
     changePosition = 0;
-  } else if (props.musicalKey === "F-dur" || props.musicalKey === "d-mol") {
+  } else if (musicalKey === "F-dur" || musicalKey === "d-mol") {
     changePosition = 10;
-  } else if (props.musicalKey === "D-dur" || props.musicalKey === "h-mol") {
+  } else if (musicalKey === "D-dur" || musicalKey === "h-mol") {
     changePosition = 20;
   }
+  return changePosition;
+}
+
+function Metrum(props) {
+  const changePosition = calculateShift(props.musicalKey);
+
   switch (props.selectedValue) {
     case "1/4":
       return (
@@ -306,10 +374,190 @@ function MusicalKey(props) {
       throw new Error("You choose the wrong musical key: ", props.valueOfKey);
   }
 }
+function CzarneKlawisze(props) {
+  switch (props.valueOfKey) {
+    case "C-dur":
+    case "a-mol":
+      if (
+        props.note === 25 ||
+        props.note === 27 ||
+        props.note === 30 ||
+        props.note === 32 ||
+        props.note === 37 ||
+        props.note === 39 ||
+        props.note === 42 ||
+        props.note === 44 ||
+        props.note === 49 ||
+        props.note === 51 ||
+        props.note === 54 ||
+        props.note === 56
+      ) {
+        return (
+          <Cross
+            key={props.key}
+            style={{
+              ...props.style,
+              position: "absolute",
 
-const positionXFirstNote = 70;
-const positionYFirstNote = 85;
-function displayNotes(pitchArray, startArray, stopArray) {
+              width: "4%",
+              height: "3.5%",
+              transform: [
+                {
+                  translateX:
+                    valueXBetweenNotes * props.i +
+                    positionXFirstNote +
+                    props.changePosition,
+                },
+                {
+                  translateY:
+                    positionsY[midiNumber[props.note]] + positionYFirstNote,
+                },
+              ],
+            }}
+          />
+        );
+      } else if (props.note === 34 || props.note === 46 || props.note === 58) {
+        return (
+          <Flat
+            key={props.key}
+            style={{
+              ...props.style,
+              position: "absolute",
+              width: "4%",
+              height: "3.5%",
+              transform: [
+                {
+                  translateX:
+                    valueXBetweenNotes * props.i +
+                    positionXFirstNote +
+                    props.changePosition,
+                },
+                {
+                  translateY:
+                    positionsY[midiNumber[props.note]] + positionYFirstNote,
+                },
+              ],
+            }}
+          />
+        );
+      }
+    case "D-dur":
+    case "h-mol":
+      if (
+        props.note === 27 ||
+        props.note === 32 ||
+        props.note === 39 ||
+        props.note === 44 ||
+        props.note === 46 ||
+        props.note === 51 ||
+        props.note === 56 ||
+        props.note === 58
+      ) {
+        return (
+          <Cross
+            key={props.key}
+            style={{
+              ...props.style,
+              position: "absolute",
+
+              width: "4%",
+              height: "3.5%",
+              transform: [
+                {
+                  translateX:
+                    valueXBetweenNotes * props.i +
+                    positionXFirstNote +
+                    props.changePosition,
+                },
+                {
+                  translateY:
+                    positionsY[midiNumber[props.note]] + positionYFirstNote,
+                },
+              ],
+            }}
+          />
+        );
+      }
+    case "F-dur":
+    case "d-mol":
+      if (
+        props.note === 25 ||
+        props.note === 27 ||
+        props.note === 30 ||
+        props.note === 32 ||
+        props.note === 37 ||
+        props.note === 39 ||
+        props.note === 42 ||
+        props.note === 44 ||
+        props.note === 49 ||
+        props.note === 51 ||
+        props.note === 54 ||
+        props.note === 56
+      ) {
+        return (
+          <Cross
+            key={props.key}
+            style={{
+              ...props.style,
+              position: "absolute",
+
+              width: "4%",
+              height: "3.5%",
+              transform: [
+                {
+                  translateX:
+                    valueXBetweenNotes * props.i +
+                    positionXFirstNote +
+                    props.changePosition,
+                },
+                {
+                  translateY:
+                    positionsY[midiNumber[props.note]] + positionYFirstNote,
+                },
+              ],
+            }}
+          />
+        );
+      }
+      break;
+
+    default:
+      return null;
+  }
+}
+
+function wyliczJakiObrazek(durationInMs, timeQuarter) {
+  //dokonczyc
+  console.log("czas cwierc", timeQuarter);
+  console.log("duration", durationInMs);
+  if (durationInMs < (3 * timeQuarter) / 8) {
+    return szesnastka;
+  } else if (
+    durationInMs >= (3 * timeQuarter) / 8 &&
+    durationInMs < (3 * timeQuarter) / 4
+  ) {
+    return osemka;
+  } else if (
+    durationInMs >= (3 * timeQuarter) / 4 &&
+    durationInMs < (3 * timeQuarter) / 2
+  ) {
+    return cwiercnuta;
+  } else if (
+    durationInMs >= (3 * timeQuarter) / 2 &&
+    durationInMs < 3 * timeQuarter
+  ) {
+    return polnuta;
+  } else if (durationInMs >= 3 * timeQuarter) {
+    return calanuta;
+  }
+}
+
+function displayNotes(musicalKey, pitchArray, startArray, stopArray, bpm) {
+  const changePosition = calculateShift(musicalKey);
+
+  //in ms
+  const timeQuarter = miliSecondInMInute / bpm;
+
   console.log("pitch: ", pitchArray);
   console.log("start: ", startArray);
   console.log("stop: ", stopArray);
@@ -317,28 +565,42 @@ function displayNotes(pitchArray, startArray, stopArray) {
   const notesArray = [];
 
   for (let i = 0; i < pitchArray.length; i++) {
-    const firstNote = pitchArray[i];
+    const note = pitchArray[i]; //to jest tylko nazwa, ktora tak naprawde jest w wywolywaniu funkcji i tak odbywa sie dodawanie tylko pitch
     const durationInMs = stopArray[i] - startArray[i];
 
-    console.log("firstnote ", firstNote);
+    // console.log("note ", nextNote);
 
-    console.log("midinumber ", midiNumber[firstNote]);
-    console.log("position ", positionsY[midiNumber[firstNote]]);
-    console.log("duration", durationInMs);
+    // console.log("midinumber ", midiNumber[note]);
+    // console.log("position ", positionsY[midiNumber[note]]);
+    // console.log("duration", durationInMs);
 
-    const translateX = 20 * i + positionXFirstNote;
-    const translateY = positionsY[midiNumber[firstNote]] + positionYFirstNote;
-
-    console.log(translateY, translateX);
-
+    const translateX =
+      valueXBetweenNotes * i + positionXFirstNote + changePosition;
+    const translateY = positionsY[midiNumber[note]] + positionYFirstNote;
+    // console.log(translateY, translateX);
+    const krzyzykbemol = (
+      <CzarneKlawisze
+        key={(i + 1) * 1000}
+        i={i}
+        valueOfKey={musicalKey}
+        note={note}
+        changePosition={changePosition}
+        style={{
+          resizeMode: "contain",
+          position: "absolute",
+        }}
+      />
+    );
+    const zrodlo = wyliczJakiObrazek(durationInMs, timeQuarter);
+    // if require ===zrodlo to zwracaj cala nute ze zmienionymi dtylami
     //tutaj do zmiennej przypisany komponent
-    const note = (
+    const notePicture = (
       <Image
-        source={require("./assets/eightNote.png")}
+        source={zrodlo}
         key={i}
         style={{
-          width: "6%",
-          height: "7%",
+          width: "10%",
+          height: "12%",
           resizeMode: "contain",
           position: "absolute",
           transform: [{ translateX }, { translateY }],
@@ -346,7 +608,30 @@ function displayNotes(pitchArray, startArray, stopArray) {
       />
     );
 
-    notesArray.push(note); //dodawanie do tablicy
+    // zamiast tego potrzebny if w width i height jak zwrocisz jako zrodlo cala nute, musisz jakos odczytac
+    // ze to to jest
+    // const note2 = (
+    //   <Image
+    //     source={require("./assets/note.png")}
+    //     key={i}
+    //     style={{
+    //       width: "5%",
+    //       height: "5%",
+    //       resizeMode: "contain",
+    //       position: "absolute",
+    //       transform: [
+    //         { translateX },
+    //         {
+    //           translateY:
+    //             positionsY[midiNumber[note]] + positionYFirstNote + 40,
+    //         },
+    //       ],
+    //     }}
+    //   />
+    // );
+
+    notesArray.push(notePicture); //dodawanie do tablicy
+    notesArray.push(krzyzykbemol);
   }
 
   return notesArray; //odnosi sie do funkcji
