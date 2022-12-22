@@ -8,6 +8,7 @@ import {
   useColorScheme,
   View,
   Button,
+  TextInput,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { PickerIOS } from "@react-native-picker/picker";
@@ -16,12 +17,15 @@ function SecondScreen({ route, navigation }) {
   const [selectedValue, setSelectedValue] = useState("1/4");
   const [durMol, setDurMol] = React.useState("dur");
   const [musicalKey, setMusicalKey] = React.useState(1);
+  const [bpm, setBpm] = React.useState(120);
+
   const make = musicTheory[durMol];
   const selectionString = make.name + " " + make.models[musicalKey];
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
         {/* <View> */}
+
         <Text>Please choose time signature:</Text>
         <Picker
           selectedValue={selectedValue}
@@ -33,6 +37,14 @@ function SecondScreen({ route, navigation }) {
           <Picker.Item label="3/4" value="3/4" />
           <Picker.Item label="4/4" value="4/4" />
         </Picker>
+
+        <Text>Enter BPM</Text>
+        <TextInput
+          placeholder="120"
+          keyboardType="numeric"
+          onChangeText={(value) => setBpm(value)}
+          // value={this.state.number}
+        />
 
         <Text>Please choose major minor mode:</Text>
         <Picker
@@ -71,6 +83,7 @@ function SecondScreen({ route, navigation }) {
               // image: goSaveImage(),
               musicalKey: make.models[musicalKey],
               chosenTimeSignature: selectedValue,
+              bpm,
             })
           }
           title="START"
@@ -81,7 +94,6 @@ function SecondScreen({ route, navigation }) {
     </SafeAreaView>
   );
 }
-
 const musicTheory = {
   dur: {
     name: "DUR",
