@@ -24,11 +24,25 @@ import Midi from "react-native-midi";
 import { useEffect } from "react";
 import Line from "./assets/line.svg";
 
-const cwiercnuta = require("./assets/quarterNote.png");
-const osemka = require("./assets/eightNote.png");
-const szesnastka = require("./assets/sixteenNote.png");
-const polnuta = require("./assets/halfNote.png");
-const calanuta = require("./assets/note.png");
+// const cwiercnuta = require("./assets/quarterNote.png");
+// const osemka = require("./assets/eightNote.png");
+// const szesnastka = require("./assets/sixteenNote.png");
+// const polnuta = require("./assets/halfNote.png");
+// const calanuta = require("./assets/note.png");
+
+const cwiercnuta = 1;
+const osemka = 0.5;
+const szesnastka = 0.25;
+const polnuta = 2;
+const calanuta = 4;
+
+const nutki = {
+  1: require("./assets/quarterNote.png"),
+  0.5: require("./assets/eightNote.png"),
+  0.25: require("./assets/sixteenNote.png"),
+  2: require("./assets/halfNote.png"),
+  4: require("./assets/note.png"),
+};
 
 const positionXFirstNote = 80; //od poczatku ekranu
 const positionYFirstNote = 63.5; //wzgledem tego układaja sie wysokosci nut
@@ -107,17 +121,6 @@ function ThirdScreen({ route, navigation, props }) {
           position: "absolute",
           transform: [{ translateX: 50 }, { translateY: 75 }],
         }}
-      />
-
-      <Line
-        position="absolute"
-        transform={[
-          { translateX: windowWidth * -0.0053 },
-          { translateY: windowHeight * -0.814 },
-          { scale: 0.11 },
-        ]}
-        height={windowHeight * 2}
-        width={windowWidth * 2}
       />
 
       {/* wywolanie funkcji displayNotes */}
@@ -356,7 +359,7 @@ function CzarneKlawisze(props) {
       ) {
         return (
           <Cross
-            key={props.key}
+            key={props.i}
             style={{
               ...props.style,
               position: "absolute",
@@ -377,7 +380,7 @@ function CzarneKlawisze(props) {
       } else if (props.note === 34 || props.note === 46 || props.note === 58) {
         return (
           <Flat
-            key={props.key}
+            key={props.i + 1}
             style={{
               ...props.style,
               position: "absolute",
@@ -409,7 +412,7 @@ function CzarneKlawisze(props) {
       ) {
         return (
           <Cross
-            key={props.key}
+            key={props.i + 2}
             style={{
               ...props.style,
               position: "absolute",
@@ -430,7 +433,7 @@ function CzarneKlawisze(props) {
       } else if (props.note === 34 || props.note === 46 || props.note === 58) {
         return (
           <Flat
-            key={props.key}
+            key={props.i + 3}
             style={{
               ...props.style,
               position: "absolute",
@@ -466,7 +469,7 @@ function CzarneKlawisze(props) {
       ) {
         return (
           <Cross
-            key={props.key}
+            key={props.i + 4}
             style={{
               ...props.style,
               position: "absolute",
@@ -492,7 +495,7 @@ function CzarneKlawisze(props) {
   }
 }
 
-function wyliczJakiObrazek(durationInMs, timeQuarter) {
+function wyliczJakaNuta(durationInMs, timeQuarter) {
   //dokonczyc
   console.log("czas cwierc", timeQuarter);
   console.log("duration", durationInMs);
@@ -533,21 +536,22 @@ function displayNotes(musicalKey, pitchArray, startArray, stopArray, bpm) {
   for (let i = 0; i < pitchArray.length; i++) {
     const note = pitchArray[i]; //to jest tylko nazwa, ktora tak naprawde jest w wywolywaniu funkcji i tak odbywa sie dodawanie tylko pitch
     const durationInMs = stopArray[i] - startArray[i];
-
     // console.log("note ", nextNote);
 
     // console.log("midinumber ", midiNumber[note]);
     // console.log("position ", positionsY[midiNumber[note]]);
     // console.log("duration", durationInMs);
-
+    const dlugoscNuty = wyliczJakaNuta(durationInMs, timeQuarter);
+    const zrodlo = nutki[dlugoscNuty];
     const translateX =
       valueXBetweenNotes * i + positionXFirstNote + changePosition;
     const translateY = positionsY[midiNumber[note]] + positionYFirstNote;
     // console.log(translateY, translateX);
     const krzyzykbemol = (
       <CzarneKlawisze
-        key={(i + 1) * 1000}
-        i={i}
+        i={`klawisz${i}`}
+        // {(i + 1) * 1000}
+        key={`klawiszz${i}`}
         translateX={translateX}
         translateY={translateY}
         valueOfKey={musicalKey}
@@ -559,19 +563,29 @@ function displayNotes(musicalKey, pitchArray, startArray, stopArray, bpm) {
         }}
       />
     );
-    const zrodlo = wyliczJakiObrazek(durationInMs, timeQuarter);
     // if require ===zrodlo to zwracaj cala nute ze zmienionymi dtylami
     //tutaj do zmiennej przypisany komponent
     const notePicture = (
       <Image
         source={zrodlo}
-        key={i}
+        key={`image${i}`}
         style={{
           width: "10%",
           height: "12%",
           resizeMode: "contain",
           position: "absolute",
           transform: [{ translateX }, { translateY }],
+        }}
+      />
+    );
+    const linia = (
+      <Line
+        key={`linia${i}`}
+        style={{
+          width: "30%",
+          height: "9%",
+          position: "absolute",
+          transform: [{ translateX: translateX - 20 }, { translateY: 56 }],
         }}
       />
     );
@@ -600,6 +614,7 @@ function displayNotes(musicalKey, pitchArray, startArray, stopArray, bpm) {
 
     notesArray.push(notePicture); //dodawanie do tablicy
     notesArray.push(krzyzykbemol);
+    notesArray.push(linia);
   }
 
   return notesArray; //odnosi sie do funkcji
