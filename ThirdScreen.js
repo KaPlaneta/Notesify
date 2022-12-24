@@ -24,12 +24,6 @@ import Midi from "react-native-midi";
 import { useEffect } from "react";
 import Line from "./assets/line.svg";
 
-// const cwiercnuta = require("./assets/quarterNote.png");
-// const osemka = require("./assets/eightNote.png");
-// const szesnastka = require("./assets/sixteenNote.png");
-// const polnuta = require("./assets/halfNote.png");
-// const calanuta = require("./assets/note.png");
-
 const cwiercnuta = 1;
 const osemka = 0.5;
 const szesnastka = 0.25;
@@ -550,7 +544,6 @@ function displayNotes(musicalKey, pitchArray, startArray, stopArray, bpm) {
     const krzyzykbemol = (
       <CzarneKlawisze
         i={`klawisz${i}`}
-        // {(i + 1) * 1000}
         key={`klawiszz${i}`}
         translateX={translateX}
         translateY={translateY}
