@@ -38,7 +38,7 @@ const nutki = {
   4: require("./assets/note.png"),
 };
 
-const positionXFirstNote = 80; //od poczatku ekranu
+const positionXFirstNote = 68; //od poczatku ekranu
 const positionYFirstNote = 63.5; //wzgledem tego układaja sie wysokosci nut
 const miliSecondInMInute = 60000;
 const valueXBetweenNotes = 35; //
@@ -213,9 +213,9 @@ function calculateShift(musicalKey) {
   if (musicalKey === "C-dur" || musicalKey === "a-mol") {
     changePosition = 0;
   } else if (musicalKey === "F-dur" || musicalKey === "d-mol") {
-    changePosition = 10;
+    changePosition = 8;
   } else if (musicalKey === "D-dur" || musicalKey === "h-mol") {
-    changePosition = 20;
+    changePosition = 18;
   }
   return changePosition;
 }
@@ -578,9 +578,24 @@ function displayNotes(
     // console.log("duration", durationInMs);
     const dlugoscNuty = wyliczJakaNuta(durationInMs, timeQuarter);
     const zrodlo = nutki[dlugoscNuty];
-    const translateX =
-      valueXBetweenNotes * i + positionXFirstNote + changePosition;
-    const translateY = positionsY[midiNumber[note]] + positionYFirstNote;
+
+    let translateX = 0;
+    let translateY = 0;
+
+    let changeLine = 0;
+    if (i <= 7) {
+      translateX = valueXBetweenNotes * i + positionXFirstNote + changePosition;
+      translateY = positionsY[midiNumber[note]] + positionYFirstNote;
+    } else if (i <= 15) {
+      translateX = valueXBetweenNotes * (i % 8) + positionXFirstNote - 15;
+      translateY = positionsY[midiNumber[note]] + 160 + positionYFirstNote;
+      changeLine = 160;
+    } else if (i <= 23) {
+      translateX = valueXBetweenNotes * (i % 8) + positionXFirstNote - 15;
+      translateY = positionsY[midiNumber[note]] + 320 + positionYFirstNote;
+      changeLine = 320;
+    }
+
     // console.log(translateY, translateX);
 
     // 4/4 i licznik = 4 , dostaje długość nuty np ćwierćnuta =1, czyli licznik =licznik - dlugoscnuty
@@ -601,7 +616,10 @@ function displayNotes(
             width: "30%",
             height: "9%",
             position: "absolute",
-            transform: [{ translateX: translateX - 20 }, { translateY: 56 }],
+            transform: [
+              { translateX: translateX - 20 },
+              { translateY: 56 + changeLine },
+            ],
           }}
         />
       );
@@ -627,21 +645,42 @@ function displayNotes(
         }}
       />
     );
+
     // if require ===zrodlo to zwracaj cala nute ze zmienionymi dtylami
     //tutaj do zmiennej przypisany komponent
-    const notePicture = (
-      <Image
-        source={zrodlo}
-        key={`image${i}`}
-        style={{
-          width: "10%",
-          height: "12%",
-          resizeMode: "contain",
-          position: "absolute",
-          transform: [{ translateX }, { translateY }],
-        }}
-      />
-    );
+    let notePicture = null;
+    if (dlugoscNuty === calanuta) {
+      notePicture = (
+        <Image
+          source={zrodlo}
+          key={`image${i}`}
+          style={{
+            width: "5%",
+            height: "5%",
+            resizeMode: "contain",
+            position: "absolute",
+            transform: [
+              { translateX: translateX + 7 },
+              { translateY: translateY + 40 },
+            ],
+          }}
+        />
+      );
+    } else {
+      notePicture = (
+        <Image
+          source={zrodlo}
+          key={`image${i}`}
+          style={{
+            width: "10%",
+            height: "12%",
+            resizeMode: "contain",
+            position: "absolute",
+            transform: [{ translateX }, { translateY }],
+          }}
+        />
+      );
+    }
 
     // zamiast tego potrzebny if w width i height jak zwrocisz jako zrodlo cala nute, musisz jakos odczytac
     // ze to to jest
