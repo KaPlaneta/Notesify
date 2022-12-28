@@ -123,7 +123,8 @@ function ThirdScreen({ route, navigation, props }) {
         arrayNotesRef.current,
         arrayStartRef.current,
         arrayStopRef.current,
-        bpm
+        bpm,
+        chosenTimeSignature
       )}
     </SafeAreaView>
   );
@@ -515,7 +516,21 @@ function wyliczJakaNuta(durationInMs, timeQuarter) {
   }
 }
 
-function displayNotes(musicalKey, pitchArray, startArray, stopArray, bpm) {
+const wartoscWTakcie = {
+  "1/4": 1,
+  "2/4": 2,
+  "3/4": 3,
+  "4/4": 4,
+};
+
+function displayNotes(
+  musicalKey,
+  pitchArray,
+  startArray,
+  stopArray,
+  bpm,
+  chosenTimeSignature
+) {
   const changePosition = calculateShift(musicalKey);
 
   //in ms
@@ -525,11 +540,37 @@ function displayNotes(musicalKey, pitchArray, startArray, stopArray, bpm) {
   console.log("start: ", startArray);
   console.log("stop: ", stopArray);
 
+  let licznik = wartoscWTakcie[chosenTimeSignature];
+  console.log("li", licznik);
   const notesArray = [];
+
+  if (pitchArray.length < startArray.length) {
+    startArray.pop();
+  }
+  if (pitchArray.length > startArray.length) {
+    pitchArray.pop();
+  }
+  if (pitchArray.length < stopArray.length) {
+    stopArray.pop();
+  }
+  if (pitchArray.length > stopArray.length) {
+    pitchArray.pop();
+  }
+  if (startArray.length > stopArray.length) {
+    startArray.pop();
+  }
+  if (startArray.length < stopArray.length) {
+    startArray.pop();
+  }
+  console.log("pitch pop: ", pitchArray);
+  console.log("start pop: ", startArray);
+  console.log("stop pop: ", stopArray);
 
   for (let i = 0; i < pitchArray.length; i++) {
     const note = pitchArray[i]; //to jest tylko nazwa, ktora tak naprawde jest w wywolywaniu funkcji i tak odbywa sie dodawanie tylko pitch
     const durationInMs = stopArray[i] - startArray[i];
+    // const pauseDurationInMs = startArray[i] - stopArray[i - 1]; //brakuje ifa i rys pauz
+
     // console.log("note ", nextNote);
 
     // console.log("midinumber ", midiNumber[note]);
@@ -541,6 +582,36 @@ function displayNotes(musicalKey, pitchArray, startArray, stopArray, bpm) {
       valueXBetweenNotes * i + positionXFirstNote + changePosition;
     const translateY = positionsY[midiNumber[note]] + positionYFirstNote;
     // console.log(translateY, translateX);
+
+    // 4/4 i licznik = 4 , dostaje długość nuty np ćwierćnuta =1, czyli licznik =licznik - dlugoscnuty
+    // Licznik = licznik - dlugoscnuty znowu(np 2) to zostało mi 1.
+    // zagrałam cwiercnute czyli rysuje się kreska - takt skończony.
+    // Licznik =0  . I jeśli licznik = 0 to licznik = wartoscWTakcie[chosenTimeSignature] od nowa.
+
+    // Jeśli    licznik<dlugoscnuty to rysuj mniejszą możliwą.
+
+    licznik = licznik - dlugoscNuty;
+    console.log("licznikkk", licznik);
+    let linia = null;
+    if (licznik <= 0) {
+      linia = (
+        <Line
+          key={`linia${i}`}
+          style={{
+            width: "30%",
+            height: "9%",
+            position: "absolute",
+            transform: [{ translateX: translateX - 20 }, { translateY: 56 }],
+          }}
+        />
+      );
+    }
+    if (licznik <= 0) {
+      licznik = wartoscWTakcie[chosenTimeSignature];
+    }
+
+    console.log("licznikkk", licznik);
+
     const krzyzykbemol = (
       <CzarneKlawisze
         i={`klawisz${i}`}
@@ -568,17 +639,6 @@ function displayNotes(musicalKey, pitchArray, startArray, stopArray, bpm) {
           resizeMode: "contain",
           position: "absolute",
           transform: [{ translateX }, { translateY }],
-        }}
-      />
-    );
-    const linia = (
-      <Line
-        key={`linia${i}`}
-        style={{
-          width: "30%",
-          height: "9%",
-          position: "absolute",
-          transform: [{ translateX: translateX - 20 }, { translateY: 56 }],
         }}
       />
     );
