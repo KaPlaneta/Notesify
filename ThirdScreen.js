@@ -50,7 +50,7 @@ const windowHeight = Dimensions.get("window").height;
 // console.log(sec);
 
 function ThirdScreen({ route, navigation, props }) {
-  const { image, bpm, musicalKey, chosenTimeSignature } = route.params;
+  const { bpm, musicalKey, chosenTimeSignature } = route.params;
 
   const [fakeStop, setFakeStop] = React.useState([]); //potrzebny jeden setter do rerenderowania componentu czyli update stanu
 
@@ -363,7 +363,7 @@ function CzarneKlawisze(props) {
               height: "3.5%",
               transform: [
                 {
-                  translateX: props.translateX - 3,
+                  translateX: props.translateX - 2,
                 },
                 {
                   translateY: props.translateY + 48,
@@ -490,6 +490,70 @@ function CzarneKlawisze(props) {
   }
 }
 
+function LineOnNote(props) {
+  if (
+    props.note === 24 ||
+    props.note === 25 ||
+    props.note === 45 ||
+    props.note === 48 ||
+    props.note === 49 ||
+    props.note === 52 ||
+    props.note === 55 ||
+    props.note === 56 ||
+    props.note === 58 ||
+    props.note === 59
+  ) {
+    return (
+      <Line
+        key={props.i}
+        style={{
+          ...props.style,
+          position: "absolute",
+          justifyContent: "center",
+          alignItems: "center",
+          width: "15%",
+          height: "15%",
+          transform: [
+            { translateX: props.translateX - 5 },
+            { translateY: props.translateY + props.changeLineForLineOnNotes },
+            { rotate: "90deg" },
+          ],
+        }}
+      />
+    );
+  } else if (
+    props.note === 46 ||
+    props.note === 47 ||
+    props.note === 50 ||
+    props.note === 51 ||
+    props.note === 53 ||
+    props.note === 54 ||
+    props.note === 57 ||
+    props.note === 58
+  ) {
+    return (
+      <Line
+        key={props.i}
+        style={{
+          ...props.style,
+          position: "absolute",
+          justifyContent: "center",
+          alignItems: "center",
+          width: "15%",
+          height: "15%",
+          transform: [
+            { translateX: props.translateX - 5 },
+            {
+              translateY: props.translateY + 5 + props.changeLineForLineOnNotes,
+            },
+            { rotate: "90deg" },
+          ],
+        }}
+      />
+    );
+  }
+}
+
 function wyliczJakaNuta(durationInMs, timeQuarter) {
   //dokonczyc
   console.log("czas cwierc", timeQuarter);
@@ -596,6 +660,21 @@ function displayNotes(
       changeLine = 320;
     }
 
+    let changeLineForLineOnNotes = 0;
+    if (i <= 7) {
+      translateX = valueXBetweenNotes * i + positionXFirstNote + changePosition;
+      translateY = positionsY[midiNumber[note]] + positionYFirstNote;
+      changeLineForLineOnNotes = -1;
+    } else if (i <= 15) {
+      translateX = valueXBetweenNotes * (i % 8) + positionXFirstNote - 15;
+      translateY = positionsY[midiNumber[note]] + 160 + positionYFirstNote;
+      changeLineForLineOnNotes = -1;
+    } else if (i <= 23) {
+      translateX = valueXBetweenNotes * (i % 8) + positionXFirstNote - 15;
+      translateY = positionsY[midiNumber[note]] + 320 + positionYFirstNote;
+      changeLineForLineOnNotes = -1;
+    }
+
     // console.log(translateY, translateX);
 
     // 4/4 i licznik = 4 , dostaje długość nuty np ćwierćnuta =1, czyli licznik =licznik - dlugoscnuty
@@ -617,7 +696,7 @@ function displayNotes(
             height: "9%",
             position: "absolute",
             transform: [
-              { translateX: translateX - 20 },
+              { translateX: translateX - 17 },
               { translateY: 56 + changeLine },
             ],
           }}
@@ -646,8 +725,25 @@ function displayNotes(
       />
     );
 
+    const lineOnNote = (
+      <LineOnNote
+        i={`line${i}`}
+        key={`line${i}`}
+        translateX={translateX}
+        translateY={translateY}
+        changeLineForLineOnNotes={changeLineForLineOnNotes}
+        note={note}
+        changePosition={changePosition}
+        style={{
+          resizeMode: "contain",
+          position: "absolute",
+        }}
+      />
+    );
+
     // if require ===zrodlo to zwracaj cala nute ze zmienionymi dtylami
     //tutaj do zmiennej przypisany komponent
+
     let notePicture = null;
     if (dlugoscNuty === calanuta) {
       notePicture = (
@@ -660,13 +756,36 @@ function displayNotes(
             resizeMode: "contain",
             position: "absolute",
             transform: [
-              { translateX: translateX + 7 },
+              { translateX: translateX + 10 },
               { translateY: translateY + 40 },
             ],
           }}
         />
       );
-    } else {
+    } else if (
+      (dlugoscNuty === osemka ||
+        dlugoscNuty === szesnastka ||
+        dlugoscNuty === cwiercnuta ||
+        dlugoscNuty === polnuta) &&
+      positionsY[midiNumber[note]] > -30
+    ) {
+      notePicture = (
+        <Image
+          source={zrodlo}
+          key={`image${i}`}
+          style={{
+            width: "11%",
+            height: "12%",
+            resizeMode: "contain",
+            position: "absolute",
+            transform: [{ translateX }, { translateY }],
+          }}
+        />
+      );
+    } else if (
+      (dlugoscNuty === polnuta || dlugoscNuty === cwiercnuta) &&
+      positionsY[midiNumber[note]] <= -30
+    ) {
       notePicture = (
         <Image
           source={zrodlo}
@@ -676,37 +795,57 @@ function displayNotes(
             height: "12%",
             resizeMode: "contain",
             position: "absolute",
-            transform: [{ translateX }, { translateY }],
+            transform: [
+              { translateX },
+              { translateY: translateY + 25 },
+              { rotate: "180deg" },
+            ],
+          }}
+        />
+      );
+    } else if (dlugoscNuty === osemka && positionsY[midiNumber[note]] <= -30) {
+      notePicture = (
+        <Image
+          source={require("./assets/rotatedEightNote.png")}
+          key={`image${i}`}
+          style={{
+            width: "4.75%",
+            height: "4.75%",
+            resizeMode: "contain",
+            position: "absolute",
+            transform: [
+              { translateX: translateX + 10 },
+              { translateY: translateY + 56 },
+            ],
+          }}
+        />
+      );
+    } else if (
+      dlugoscNuty === szesnastka &&
+      positionsY[midiNumber[note]] <= -30
+    ) {
+      notePicture = (
+        <Image
+          source={require("./assets/rotatedSixteenNote.png")}
+          key={`image${i}`}
+          style={{
+            width: "7%",
+            height: "7%",
+            resizeMode: "contain",
+            position: "absolute",
+            transform: [
+              { translateX: translateX + 10 },
+              { translateY: translateY + 47 },
+            ],
           }}
         />
       );
     }
 
-    // zamiast tego potrzebny if w width i height jak zwrocisz jako zrodlo cala nute, musisz jakos odczytac
-    // ze to to jest
-    // const note2 = (
-    //   <Image
-    //     source={require("./assets/note.png")}
-    //     key={i}
-    //     style={{
-    //       width: "5%",
-    //       height: "5%",
-    //       resizeMode: "contain",
-    //       position: "absolute",
-    //       transform: [
-    //         { translateX },
-    //         {
-    //           translateY:
-    //             positionsY[midiNumber[note]] + positionYFirstNote + 40,
-    //         },
-    //       ],
-    //     }}
-    //   />
-    // );
-
     notesArray.push(notePicture); //dodawanie do tablicy
     notesArray.push(krzyzykbemol);
     notesArray.push(linia);
+    notesArray.push(lineOnNote);
   }
 
   return notesArray; //odnosi sie do funkcji
