@@ -53,7 +53,7 @@ function ThirdScreen({ route, navigation, props }) {
   const { bpm, musicalKey, chosenTimeSignature } = route.params;
 
   const [fakeStop, setFakeStop] = React.useState([]); //potrzebny jeden setter do rerenderowania componentu czyli update stanu
-
+  const [show_Hide, setShowHide] = useState("none");
   console.log("musicalKey", musicalKey);
   console.log("timeSignature", chosenTimeSignature);
 
@@ -88,6 +88,14 @@ function ThirdScreen({ route, navigation, props }) {
     };
   }, []);
 
+  const letToggle = () => {
+    if (show_Hide === "flex") {
+      setShowHide("none");
+    } else {
+      setShowHide("flex");
+    }
+  };
+
   return (
     <SafeAreaView>
       <Staff
@@ -99,6 +107,58 @@ function ThirdScreen({ route, navigation, props }) {
         height={800}
         width={windowWidth}
       />
+
+      <View
+        style={{
+          position: "absolute",
+          width: "20%",
+          height: "10%",
+          transform: [{ translateX: 80 }, { translateY: 46 }],
+        }}
+      >
+        <Text>= {bpm}</Text>
+      </View>
+      <Image
+        source={require("./assets/quarterNote.png")}
+        style={{
+          width: "9%",
+          height: "9%",
+          resizeMode: "contain",
+          position: "absolute",
+          transform: [{ translateX: 55 }, { translateY: 10 }],
+        }}
+      />
+      <View
+        style={{
+          position: "absolute",
+          width: "20%",
+          height: "10%",
+          transform: [{ translateX: 250 }, { translateY: 530 }],
+        }}
+      >
+        <Image
+          source={require("./assets/endSong.png")}
+          style={{
+            width: "1020%",
+            height: "240%",
+            resizeMode: "contain",
+            position: "absolute",
+            display: show_Hide,
+            transform: [{ translateX: -260 }, { translateY: -216 }],
+          }}
+        />
+
+        <Button
+          onPress={letToggle}
+          style={{
+            position: "absolute",
+            resizeMode: "contain",
+          }}
+          title="END SONG"
+          color="#bfbfbf"
+        />
+      </View>
+
       <MusicalKey
         valueOfKey={musicalKey}
         style={{
