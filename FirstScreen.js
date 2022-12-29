@@ -22,20 +22,10 @@ function FirstScreen({ navigation }) {
     <SafeAreaView style={styles.container}>
       <Logo />
       <StatusBar style="auto" />
-      {/* <View style={styles.appButtonContainer}> */}
-      {/* <AwesomeButton
-        CREATE
-        SONG
 
-        // onPress={() => navigation.navigate("SecondScreen")}
-        // color="#fcf7fb"
-      />
-      </View> */}
       <ThemedButton
         name="bruce"
-        // type="danger"
         activityColor="#fffffff"
-        // textColor="a82f7a"
         style={styles.button}
         onPress={() => navigation.navigate("SecondScreen")}
       >
