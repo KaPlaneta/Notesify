@@ -17,19 +17,50 @@ function SecondScreen({ route, navigation }) {
   const [selectedValue, setSelectedValue] = useState("1/4");
   const [durMol, setDurMol] = React.useState("dur");
   const [musicalKey, setMusicalKey] = React.useState(1);
-  const [bpm, setBpm] = React.useState(120);
+  const [bpm, setBpm] = React.useState(60);
 
   const make = musicTheory[durMol];
   const selectionString = make.name + " " + make.models[musicalKey];
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
-        {/* <View> */}
+        <Text
+          style={{
+            fontSize: 17,
+            fontWeight: "bold",
+            textAlignVertical: "center",
+            textAlign: "center",
+          }}
+        >
+          Enter BPM
+        </Text>
+        <TextInput
+          placeholder="60"
+          textAlign="center"
+          keyboardType="numeric"
+          onChangeText={(value) => setBpm(value)}
+          // value={this.state.number}
+        />
 
-        <Text>Please choose time signature:</Text>
+        <Text
+          style={{
+            fontSize: 17,
+            fontWeight: "bold",
+            textAlignVertical: "center",
+            textAlign: "center",
+          }}
+        >
+          Choose time signature:
+        </Text>
         <Picker
           selectedValue={selectedValue}
-          style={{ width: 150 }}
+          style={{
+            textAlignVertical: "center",
+            textAlign: "center",
+            justifyContent: "center",
+            alignItems: "center",
+            width: 200,
+          }}
           onValueChange={(value) => setSelectedValue(value)}
         >
           <Picker.Item label="1/4" value="1/4" />
@@ -38,15 +69,16 @@ function SecondScreen({ route, navigation }) {
           <Picker.Item label="4/4" value="4/4" />
         </Picker>
 
-        <Text>Enter BPM</Text>
-        <TextInput
-          placeholder="120"
-          keyboardType="numeric"
-          onChangeText={(value) => setBpm(value)}
-          // value={this.state.number}
-        />
-
-        <Text>Please choose major minor mode:</Text>
+        <Text
+          style={{
+            fontSize: 17,
+            fontWeight: "bold",
+            textAlignVertical: "center",
+            textAlign: "center",
+          }}
+        >
+          Choose major/minor mode:
+        </Text>
         <Picker
           selectedValue={durMol}
           onValueChange={(value) => {
@@ -62,7 +94,16 @@ function SecondScreen({ route, navigation }) {
             />
           ))}
         </Picker>
-        <Text>Please choose a key of {make.name}:</Text>
+        <Text
+          style={{
+            fontSize: 17,
+            fontWeight: "bold",
+            textAlignVertical: "center",
+            textAlign: "center",
+          }}
+        >
+          Choose a key of {make.name}:
+        </Text>
         <Picker
           selectedValue={musicalKey}
           key={durMol}
@@ -76,11 +117,9 @@ function SecondScreen({ route, navigation }) {
             />
           ))}
         </Picker>
-        <Text>You selected: {selectionString}</Text>
         <Button
           onPress={() =>
             navigation.navigate("ThirdScreen", {
-              // image: goSaveImage(),
               musicalKey: make.models[musicalKey],
               chosenTimeSignature: selectedValue,
               bpm,
@@ -100,8 +139,8 @@ const musicTheory = {
     models: ["F-dur", "C-dur", "D-dur"],
   },
   mol: {
-    name: "MOL",
-    models: ["d-mol", "a-mol", "h-mol"],
+    name: "MOLL",
+    models: ["d-moll", "a-moll", "h-moll"],
   },
 };
 
@@ -113,6 +152,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#f0f5f4",
     flexDirection: "column",
+    textAlign: "center",
   },
   elementContainer: {
     marginTop: 8,
