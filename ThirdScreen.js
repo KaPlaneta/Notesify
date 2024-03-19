@@ -38,42 +38,32 @@ const nutki = {
   4: require("./assets/note.png"),
 };
 
-const positionXFirstNote = 68; //od poczatku ekranu
-const positionYFirstNote = 63.5; //wzgledem tego układaja sie wysokosci nut
-const miliSecondInMInute = 60000;
+const positionXFirstNote = 75;
+const positionYFirstNote = 63;
+const miliSecondInMinute = 60000;
 const valueXBetweenNotes = 35; //
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
-// const sec = new Date().getSeconds(); //To get the Current Seconds
-// console.log(sec);
-
 function ThirdScreen({ route, navigation, props }) {
   const { bpm, musicalKey, chosenTimeSignature } = route.params;
 
-  const [fakeStop, setFakeStop] = React.useState([]); //potrzebny jeden setter do rerenderowania componentu czyli update stanu
+  const [fakeStop, setFakeStop] = React.useState([]);
   const [show_Hide, setShowHide] = useState("none");
   console.log("musicalKey", musicalKey);
   console.log("timeSignature", chosenTimeSignature);
 
-  const arrayNotesRef = React.useRef([]); //stan nie rerenderuje sie komponent jak sie go zmienia
+  const arrayNotesRef = React.useRef([]);
   const arrayStartRef = React.useRef([]);
   const arrayStopRef = React.useRef([]);
-
-  //   console.log("pitch: ", arrayNotesRef.current); //zobaczyc czy rerenderuje sie komponent
 
   useEffect(() => {
     Midi.on(Midi.NOTE_ON, (event) => {
       const time = new Date().getTime();
-      // event.note - pojedynczy number ktory przychodzi
-      // pitch - tablica numerow wysokosci
-      // start -number kiedy sie zaczslo
+
       arrayNotesRef.current.push(event.note);
       arrayStartRef.current.push(time);
-
-      //   console.log("note ", arrayNotesRef.current); //zobacyzc czy naciskanie dziala
-      //   console.log("start ", arrayStartRef.current);
     });
 
     Midi.on(Midi.NOTE_OFF, (event) => {
@@ -98,15 +88,7 @@ function ThirdScreen({ route, navigation, props }) {
 
   return (
     <SafeAreaView>
-      <Staff
-        // transform={[
-        //   { scale: 0.5 },
-        //   { translateX: windowWidth * -0.5 },
-        //   { translateY: windowHeight * -0.5 },
-        // ]}
-        height={800}
-        width={windowWidth}
-      />
+      <Staff height={800} width={windowWidth} />
 
       <View
         style={{
@@ -144,7 +126,7 @@ function ThirdScreen({ route, navigation, props }) {
             resizeMode: "contain",
             position: "absolute",
             display: show_Hide,
-            transform: [{ translateX: -260 }, { translateY: -216 }],
+            transform: [{ translateX: -330 }, { translateY: -377 }],
           }}
         />
 
@@ -155,7 +137,7 @@ function ThirdScreen({ route, navigation, props }) {
             resizeMode: "contain",
           }}
           title="END SONG"
-          color="#bfbfbf"
+          color="#a82f7a"
         />
       </View>
 
@@ -177,14 +159,13 @@ function ThirdScreen({ route, navigation, props }) {
         }}
       />
 
-      {/* wywolanie funkcji displayNotes */}
       {displayNotes(
         musicalKey,
         arrayNotesRef.current,
-        arrayStartRef.current,
         arrayStopRef.current,
         bpm,
-        chosenTimeSignature
+        chosenTimeSignature,
+        show_Hide
       )}
     </SafeAreaView>
   );
@@ -267,7 +248,6 @@ const positionsY = {
   H3: -105,
 };
 
-//funkcja do zmieniana polozenia tonacji i metrum i dzwiekow
 function calculateShift(musicalKey) {
   let changePosition = 0;
   if (musicalKey === "C-dur" || musicalKey === "a-mol") {
@@ -383,6 +363,40 @@ function MusicalKey(props) {
               width: "4%",
               height: "3.5%",
               transform: [{ translateX: 60 }, { translateY: 75 }],
+            }}
+          />
+          <Cross
+            style={{
+              ...props.style,
+              width: "4%",
+              height: "3.5%",
+              transform: [{ translateX: 50 }, { translateY: 220 }],
+            }}
+          />
+          <Cross
+            style={{
+              ...props.style,
+              position: "absolute",
+              width: "4%",
+              height: "3.5%",
+              transform: [{ translateX: 60 }, { translateY: 235 }],
+            }}
+          />
+          <Cross
+            style={{
+              ...props.style,
+              width: "4%",
+              height: "3.5%",
+              transform: [{ translateX: 50 }, { translateY: 380 }],
+            }}
+          />
+          <Cross
+            style={{
+              ...props.style,
+              position: "absolute",
+              width: "4%",
+              height: "3.5%",
+              transform: [{ translateX: 60 }, { translateY: 395 }],
             }}
           />
         </>
@@ -574,7 +588,7 @@ function LineOnNote(props) {
           width: "15%",
           height: "15%",
           transform: [
-            { translateX: props.translateX - 5 },
+            { translateX: props.translateX - 6.5 },
             { translateY: props.translateY + props.changeLineForLineOnNotes },
             { rotate: "90deg" },
           ],
@@ -646,19 +660,19 @@ const wartoscWTakcie = {
   "3/4": 3,
   "4/4": 4,
 };
-
 function displayNotes(
   musicalKey,
   pitchArray,
   startArray,
   stopArray,
   bpm,
-  chosenTimeSignature
+  chosenTimeSignature,
+  show_Hide
 ) {
   const changePosition = calculateShift(musicalKey);
 
   //in ms
-  const timeQuarter = miliSecondInMInute / bpm;
+  const timeQuarter = miliSecondInMinute / bpm;
 
   console.log("pitch: ", pitchArray);
   console.log("start: ", startArray);
@@ -686,20 +700,10 @@ function displayNotes(
   if (startArray.length < stopArray.length) {
     startArray.pop();
   }
-  console.log("pitch pop: ", pitchArray);
-  console.log("start pop: ", startArray);
-  console.log("stop pop: ", stopArray);
 
   for (let i = 0; i < pitchArray.length; i++) {
-    const note = pitchArray[i]; //to jest tylko nazwa, ktora tak naprawde jest w wywolywaniu funkcji i tak odbywa sie dodawanie tylko pitch
+    const note = pitchArray[i];
     const durationInMs = stopArray[i] - startArray[i];
-    // const pauseDurationInMs = startArray[i] - stopArray[i - 1]; //brakuje ifa i rys pauz
-
-    // console.log("note ", nextNote);
-
-    // console.log("midinumber ", midiNumber[note]);
-    // console.log("position ", positionsY[midiNumber[note]]);
-    // console.log("duration", durationInMs);
     const dlugoscNuty = wyliczJakaNuta(durationInMs, timeQuarter);
     const zrodlo = nutki[dlugoscNuty];
 
@@ -734,15 +738,6 @@ function displayNotes(
       translateY = positionsY[midiNumber[note]] + 320 + positionYFirstNote;
       changeLineForLineOnNotes = -1;
     }
-
-    // console.log(translateY, translateX);
-
-    // 4/4 i licznik = 4 , dostaje długość nuty np ćwierćnuta =1, czyli licznik =licznik - dlugoscnuty
-    // Licznik = licznik - dlugoscnuty znowu(np 2) to zostało mi 1.
-    // zagrałam cwiercnute czyli rysuje się kreska - takt skończony.
-    // Licznik =0  . I jeśli licznik = 0 to licznik = wartoscWTakcie[chosenTimeSignature] od nowa.
-
-    // Jeśli    licznik<dlugoscnuty to rysuj mniejszą możliwą.
 
     licznik = licznik - dlugoscNuty;
     console.log("licznikkk", licznik);
@@ -801,9 +796,6 @@ function displayNotes(
       />
     );
 
-    // if require ===zrodlo to zwracaj cala nute ze zmienionymi dtylami
-    //tutaj do zmiennej przypisany komponent
-
     let notePicture = null;
     if (dlugoscNuty === calanuta) {
       notePicture = (
@@ -838,7 +830,7 @@ function displayNotes(
             height: "12%",
             resizeMode: "contain",
             position: "absolute",
-            transform: [{ translateX }, { translateY }],
+            transform: [{ translateX }, { translateY: translateY - 1 }],
           }}
         />
       );
@@ -902,14 +894,13 @@ function displayNotes(
       );
     }
 
-    notesArray.push(notePicture); //dodawanie do tablicy
+    notesArray.push(notePicture);
     notesArray.push(krzyzykbemol);
     notesArray.push(linia);
     notesArray.push(lineOnNote);
   }
 
-  return notesArray; //odnosi sie do funkcji
+  return notesArray;
 }
 export default ThirdScreen;
-//  export{DetailsScreen};
 export { displayNotes };
